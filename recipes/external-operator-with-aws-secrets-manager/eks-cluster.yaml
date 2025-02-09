@@ -1,0 +1,29 @@
+# Defines the API version of `eksctl` being used for this configuration.
+# `eksctl.io/v1alpha5` is a version of the schema used by `eksctl` CLI to create EKS clusters.
+apiVersion: eksctl.io/v1alpha5
+
+# Declares the type of resource being defined.
+# `ClusterConfig` is used to configure an Amazon EKS (Elastic Kubernetes Service) cluster.
+kind: ClusterConfig
+
+metadata:
+  # Specifies the name of the EKS cluster to be created.
+  name: eks-external-secrets
+
+  # Defines the AWS region where the EKS cluster will be deployed.
+  region: us-east-1
+
+# Defines the worker node group(s) for the EKS cluster.
+nodeGroups:
+  - name: ng-1  # Name of the node group.
+    
+    # Defines the EC2 instance type for the nodes in this group.
+    # `t3.small` is a cost-effective instance type with 2 vCPUs and 2 GiB RAM.
+    instanceType: t3.small  
+
+    # Specifies the number of worker nodes to be created in the node group.
+    # `desiredCapacity: 1` means that one node will be provisioned initially.
+    desiredCapacity: 1  
+
+    # Defines the root volume size (in GB) for each node in this node group.
+    volumeSize: 8  # Each node will have an 8 GB root volume.
