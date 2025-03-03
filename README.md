@@ -13,3 +13,4 @@ Kubernetes is one of the most widely deployed software systems in the world bein
 
 - [Use External Secrets Operator (ESO) to Store and Use Sensitive Data in Kubernetes Cluster](./recipes/external-operator-with-aws-secrets-manager/)
 - [RBAC Basics](./recipes/rbac-basics/)
+- [Metrics Server](./recipes/metrics-server/)
