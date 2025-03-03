@@ -1,0 +1,37 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+availabilityZones:
+  - ${AWS_REGION}a
+  - ${AWS_REGION}b
+  - ${AWS_REGION}c
+metadata:
+  name: ${EKS_CLUSTER_NAME}
+  region: ${AWS_REGION}
+  version: "1.30" # Kubernetes version
+  tags: # User defined custom AWS resource tags added to the cluster
+    created-by: eks-workshop
+    env: ${EKS_CLUSTER_NAME} # Cluster environment
+iam:
+  withOIDC: true # Enables OIDC (OpenID Connect) for integrating IAM roles with Kubernetes Service Accounts
+vpc:
+  cidr: 10.42.0.0/16
+  clusterEndpoints:
+    privateAccess: true # Allows access to the Kubernetes API from within the VPC.
+    publicAccess: true # Allows access to the Kubernetes API from the internet.
+addons: # Specifies Kubernetes addons and it's configurations to be installed on the cluster.
+  - name: vpc-cni
+    version: 1.16.0 # vpc-cni addon version
+    configurationValues: '{"env":{"ENABLE_PREFIX_DELEGATION":"true", "ENABLE_POD_ENI":"true", "POD_SECURITY_GROUP_ENFORCING_MODE":"standard"},"enableNetworkPolicy": "true", "nodeAgent": {"enablePolicyEventLogs": "true"}}'
+    resolveConflicts: overwrite # In case of configuration conflicts - overwrite
+managedNodeGroups: # Specifies configurations for managed worker nodes in the cluster.
+  - name: default # Name of the node group
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 6
+    instanceType: t3.micro
+    privateNetworking: true # Ensures nodes use private IPs within the VPC.
+    releaseVersion: "1.30.0-20240625" # Specific Kubernetes version for the nodes.
+    updateConfig:
+      maxUnavailablePercentage: 50 # During updates, up to 50% of nodes can be unavailable simultaneously.
+    labels: 
+      workshop-default: "yes" # Adds Kubernetes labels to nodes
