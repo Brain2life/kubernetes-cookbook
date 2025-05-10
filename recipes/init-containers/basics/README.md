@@ -4,7 +4,7 @@ Apart from the *main containers* that run the app logic, the most popular types 
 - Init containers
 - Sidecar containers
 
-![](../../img/init_containers.png)
+![](../../../img/init_containers.png)
 
 **Init containers** in Kubernetes are specialized containers that **run and complete before the main application containers** in a Pod start. They are defined in the Pod's specification and are used to perform setup tasks, such as initializing configurations, downloading dependencies, or ensuring prerequisites are met.
 
@@ -29,7 +29,7 @@ Most often init containers used for:
 
 Let's consider **secret injection use case**. Imagine you have an application that requires a secret to connect to an external API. Due to compliance rules, you can’t hardcode this secret into the app or store it in Kubernetes secrets. Instead, you can use an init container to retrieve the secret from a secret management tool like Vault or AWS Secrets Manager and place it in a specific location within the pod, where the main application container can then access it.
 
-![](../../img/init_containers_secret_injection.png)
+![](../../../img/init_containers_secret_injection.png)
 
 This way when the application pod starts, it will have access to the secret to connect to the API.
 
@@ -43,7 +43,7 @@ In short, init containers ensure your applications are always properly configure
 * In the Pod’s **lifecycle**, init containers run to completion during the **pending phase**.
 * Although init containers use the same container spec format, they **do not support** `lifecycle`, `livenessProbe`, `readinessProbe`, or `startupProbe` fields (except when using the native sidecar alpha feature).
 
-![](../../img/init_containers_workings.gif)
+![](../../../img/init_containers_workings.gif)
 
 ## Specification of Init Containers
 
@@ -53,7 +53,7 @@ Init containers are defined in the [`pod.spec.initContainers`](https://kubernete
 
 In this example we will create two init containers, where the first container gets it's Pod IP and then writes into the attached volume. The second init container mounts the volume, reads the IP address and writes it into the `index.html` page. Third main container runs `nginx` web server, mounts the volume and serves the `index.html` webpage with the pod IP.
 
-![](../../img/init_containers_example.png)
+![](../../../img/init_containers_example.png)
 
 To create a cluster, use Minikube:
 ```bash
