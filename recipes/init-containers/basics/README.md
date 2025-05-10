@@ -79,7 +79,10 @@ curl localhost:8080
 
 ## CPU Requests Pitfall
 
-If there are several init containers the **highest values set** for any init container is called the **effective init request/limit**. Meaning, that if you have an init container without a CPU/Memory limit set, it can use the **maximum of the effective init request/limit**.
+If a pod has multiple init containers, Kubernetes calculates the **effective init resource request/limit** as the **highest value set for any of the init containers** (for each resource type, like CPU or memory).
+This means that during the init phase, the pod’s resource footprint is determined by the maximum request/limit among all init containers - not the sum.
+
+Additionally, if an init container has no limit or request set, it can consume up to the maximum defined by the pod’s effective init request/limit for that resource.
 
 > [!CAUTION] 
 > Ensure that the sum of resources requested by Init Containers and main containers does not exceed the available resources on cluster nodes. 
