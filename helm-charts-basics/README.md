@@ -36,8 +36,7 @@ This demo project shows the basics of using Helm Charts with app development. In
 - [Helm Upgrade](#helm-upgrade)
 - [Helm Rollback](#helm-rollback)
 - [Helm Package](#helm-package)
-- [Best Practices](#best-practices)
-  - [Best Practices for Developing Helm Charts](#best-practices-for-developing-helm-charts)
+- [Best Practices for Developing Helm Charts](#best-practices-for-developing-helm-charts)
 - [References](#references)
 
 ## Overview
@@ -772,6 +771,8 @@ Example with custom version:
 helm package ./nginx-chart --version 1.0.1 --destination ./charts
 ```
 
+For more information, see [Helm Package](https://helm.sh/docs/helm/helm_package/)
+
 ---
 
 ### **Why Use `helm package`?**
@@ -781,9 +782,7 @@ helm package ./nginx-chart --version 1.0.1 --destination ./charts
 *  To share internally (e.g., in an S3 or Nexus repo)
 *  To use with CI/CD pipelines for controlled deployments
 
-## Best Practices
-
-### Best Practices for Developing Helm Charts
+## Best Practices for Developing Helm Charts
 
 1. **Include Documentation**
 
