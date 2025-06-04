@@ -15,4 +15,4 @@ Kubernetes is one of the most widely deployed software systems in the world bein
 - [RBAC Basics](./recipes/rbac-basics/)
 - [Scaling Kubernetes Workloads: How Metrics Server and HPA Work Together](./recipes/metrics-server/)
 - [Init Container Basics](./recipes/init-containers/basics/)
-- [Helm Charts Basics: Create Helm Chart for Nginx app](./helm-charts-basics/)
+- [Helm Charts Basics: Create Helm Chart for Nginx app](./recipes/helm-charts-basics/)
