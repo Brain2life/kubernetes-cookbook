@@ -1,0 +1,19 @@
+apiVersion: v1              # Specifies the API version for ConfigMap
+kind: ConfigMap             # Declares the resource type as ConfigMap
+
+metadata:
+  # ConfigMap name includes the release name to ensure uniqueness across environments
+  name: {{ .Release.Name }}-index-html-configmap
+
+  # The namespace where this ConfigMap will be created (static value in this example)
+  namespace: default
+
+data:
+  # Key of the ConfigMap entry; the application will use this as a file (index.html)
+  index.html: |
+    <html>
+    <h1>Welcome</h1>
+    </br>
+    <!-- Display environment name pulled from values.yaml -->
+    <h1>Hi! I got deployed in {{ .Values.env.name }} Environment using Helm Chart </h1>
+    </html>

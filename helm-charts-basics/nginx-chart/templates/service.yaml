@@ -1,0 +1,24 @@
+# Define the Kubernetes API version and resource type
+apiVersion: v1
+kind: Service
+
+metadata:
+  # Service name includes the Helm release name for uniqueness across environments
+  name: {{ .Release.Name }}-service
+
+spec:
+  selector:
+    # This selector targets pods that were deployed with the same Helm release name
+    app.kubernetes.io/instance: {{ .Release.Name }}
+
+  # The type of service (e.g., ClusterIP, NodePort, LoadBalancer), defined in values.yaml
+  type: {{ .Values.service.type }}
+
+  ports:
+    - protocol: {{ .Values.service.protocol | default "TCP" }} # Protocol used for the service port (defaults to TCP if not specified)
+      
+      # The port exposed by the service within the cluster
+      port: {{ .Values.service.port }}
+      
+      # The port on the pod that receives the traffic
+      targetPort: {{ .Values.service.targetPort }}

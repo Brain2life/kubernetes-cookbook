@@ -1,0 +1,29 @@
+# Number of pod replicas to deploy; can be overridden per environment
+replicaCount: 2
+
+image:
+  # Docker image repository to pull the container from
+  repository: nginx
+  
+  # Specific image tag/version to deploy
+  tag: "1.16.0"
+
+  # Policy for pulling the image: Always, IfNotPresent, or Never
+  pullPolicy: IfNotPresent
+
+service:
+  # Name of the Kubernetes service (not necessarily required unless used in templates)
+  name: nginx-service
+
+  # Type of service to expose the application: ClusterIP, NodePort, or LoadBalancer
+  type: ClusterIP
+
+  # Port exposed by the Kubernetes service
+  port: 80
+
+  # Port on the container to forward traffic to
+  targetPort: 9000
+
+env:
+  # Name of the environment (used for templating purposes, e.g., in configmap or logs)
+  name: dev

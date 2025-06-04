@@ -1,0 +1,47 @@
+# Define the API version and type of Kubernetes resource
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  # Name of the Deployment, using the Helm release name with "-nginx" suffix to ensure uniqueness
+  name: {{ .Release.Name }}-nginx
+
+  labels:
+    # Basic label to identify the app; used for selectors and grouping
+    app: nginx
+
+spec:
+  # Number of pod replicas, configurable via values.yaml (e.g., different for dev/staging/prod)
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      # Ensures the Deployment manages pods with the label `app: nginx`
+      app: nginx
+
+  template:
+    metadata:
+      labels:
+        # Labels applied to pods created by this Deployment
+        app: nginx
+
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}  # Container name, typically same as chart name
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Image name and tag from values.yaml
+          imagePullPolicy: {{ .Values.image.pullPolicy }}  # Pull policy (e.g., Always, IfNotPresent)
+
+          ports:
+            - name: http  # Name of the container port (optional, helps in service mapping)
+              containerPort: 80  # The port the container listens on
+              protocol: TCP  # Protocol used (default is TCP)
+
+          volumeMounts:
+            - name: nginx-index-file  # Reference to the volume defined below
+              mountPath: /usr/share/nginx/html/  # Mount path inside the container (Nginx's default web root)
+
+      volumes:
+        - name: nginx-index-file  # Name referenced in volumeMounts
+          configMap:
+            # Name of the ConfigMap holding static content, includes release name for uniqueness
+            name: {{ .Release.Name }}-index-html-configmap

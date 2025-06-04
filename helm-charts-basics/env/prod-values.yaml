@@ -1,0 +1,15 @@
+replicaCount: 4
+
+image:
+  repository: nginx
+  tag: "1.25.0"
+  pullPolicy: Always
+
+service:
+  name: nginx-service
+  type: LoadBalancer
+  port: 80
+  targetPort: 80
+
+env:
+  name: production
