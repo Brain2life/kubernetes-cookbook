@@ -1,0 +1,46 @@
+# Configuration for the container image used by Grafana
+image:
+  repository: grafana/grafana
+  tag: latest
+  # Sets the image pull policy; 'IfNotPresent' uses local image if available, otherwise pulls
+  pullPolicy: IfNotPresent
+
+# Resource requests and limits for the Grafana pod
+resources:
+  requests:
+    # Requests 100 milliCPU (0.1 CPU core) for guaranteed CPU allocation
+    cpu: 100m
+    # Requests 128 Mebibytes of memory for guaranteed memory allocation
+    memory: 128Mi
+  # Maximum resources the pod can consume to prevent resource overuse
+  limits:
+    # Limits CPU usage to 500 milliCPU (0.5 CPU core)
+    cpu: 500m
+    # Limits memory usage to 512 Mebibytes
+    memory: 512Mi
+
+# Configuration for Grafana data sources
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    # List of data sources to configure in Grafana
+    datasources:
+    # Configuration for a single data source
+    - name: Loki
+      # Specifies the type of data source; 'loki' indicates Grafana Loki for logs
+      type: loki
+      # URL of the Loki service, typically within the Kubernetes cluster
+      url: http://loki-gateway.loki.svc.cluster.local
+      # Access mode; 'proxy' means Grafana proxies requests to the data source
+      access: proxy
+      # Sets whether this is the default data source; 'false' means it is not default
+      isDefault: false
+      # Allows the data source to be edited via Grafana's UI
+      editable: true
+
+# Configuration for the Kubernetes service exposing Grafana
+service:
+  # Specifies the service type; 'NodePort' exposes the service on a port of each node
+  type: NodePort
+  # Defines the internal service port; maps to port 80 for HTTP access
+  port: 80

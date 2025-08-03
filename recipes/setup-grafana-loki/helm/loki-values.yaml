@@ -1,0 +1,144 @@
+# This section contains the main configuration for the Loki instance itself.
+loki:
+  # --- Common Configuration ---
+  # This applies to all Loki components (ingester, querier, etc.).
+  commonConfig:
+    # replication_factor determines how many replicas of each log chunk are stored.
+    # A value of 1 means no replication, which is suitable for development or non-critical environments.
+    # For production, this should be 3 to ensure data durability and high availability.
+    replication_factor: 1
+
+  # --- Storage Configuration ---
+  # Defines where Loki will store its data (index and log chunks).
+  storage:
+    # 'filesystem' means Loki will store data on a persistent volume attached to the pod.
+    # Other options include cloud storage like 's3', 'gcs', or 'azure'.
+    type: 'filesystem'
+    # bucketNames is primarily for object storage (like S3). It's included here but
+    # isn't actively used when the storage `type` is 'filesystem'.
+    bucketNames:
+      chunks: chunks
+      ruler: ruler
+      admin: admin
+
+  # --- Schema Configuration ---
+  # Defines how Loki's index and data are structured over time. This allows for schema evolution.
+  schemaConfig:
+    configs:
+      # This configuration block applies to all data ingested from April 1st, 2024, onwards.
+      - from: "2024-04-01"
+        # 'tsdb' is a high-performance index store, recommended for new setups.
+        store: tsdb
+        # Specifies that the object store for chunks is the local filesystem, matching the top-level `storage.type`.
+        object_store: filesystem
+        # 'v13' is the schema version. Newer versions typically offer performance improvements.
+        schema: v13
+        # Configuration for the index.
+        index:
+          # A prefix for index files/tables. Helps avoid collisions if sharing a storage bucket.
+          prefix: loki_index_
+          # How often a new index table/file is created. '24h' means a new index file per day.
+          period: 24h
+
+  # --- Filesystem Specific Storage Configuration ---
+  # This block is used only because `storage.type` is 'filesystem'.
+  storage_config:
+    filesystem:
+      # The directory inside the persistent volume where Loki will store its data.
+      directory: /tmp/loki/chunks
+
+  # --- Pattern Ingester ---
+  # This feature is disabled in the Loki binary by default, enabling it here allows for parsing logs at ingestion time.
+  pattern_ingester:
+    enabled: true
+
+  # --- Limits Configuration ---
+  # Sets various operational limits for Loki.
+  limits_config:
+    # Allows for log lines to contain structured metadata, which can be extracted at query time.
+    allow_structured_metadata: true
+    # Enables volume-based limits and metrics for tenants.
+    volume_enabled: true
+
+  # --- Ruler Configuration ---
+  # The ruler is responsible for evaluating alerting and recording rules.
+  ruler:
+    # Enables the API endpoints for managing rules.
+    enable_api: true
+
+  # Disables authentication and multi-tenancy. All requests are handled by a single, default tenant.
+  auth_enabled: false
+
+# --- MinIO Configuration ---
+# MinIO is an S3-compatible object storage server.
+minio:
+  # It's disabled because we are using 'filesystem' storage, not S3.
+  enabled: false
+
+# --- Deployment Mode ---
+# Specifies the architecture for the Loki deployment.
+# 'SingleBinary' runs all Loki components (ingester, querier, distributor) in a single process/pod.
+# This is simple to manage but less scalable than the 'SimpleScalable' (microservices) mode.
+deploymentMode: SingleBinary
+
+# --- Single Binary Mode Configuration ---
+# This section is only active because `deploymentMode` is 'SingleBinary'.
+singleBinary:
+  # The number of Loki pods to run. '1' means a single instance.
+  replicas: 1
+  # --- Persistence Configuration ---
+  # Defines the Persistent Volume Claim (PVC) to store Loki's data.
+  persistence:
+    enabled: true
+    # The Kubernetes storage class to use for the volume. 'gp2' is a common AWS EBS type.
+    storageClass: gp2
+    # The access mode for the volume. 'ReadWriteOnce' means the volume can be mounted as read-write by a single node.
+    accessModes:
+      - ReadWriteOnce
+    # The size of the persistent volume to request.
+    size: 20Gi
+
+  # --- Resource Allocation ---
+  # Defines the CPU and memory resources for the Loki pod.
+  resources:
+    # The minimum resources guaranteed for the pod.
+    requests:
+      cpu: "100m" # 100 millicores = 0.1 vCPU
+      memory: "256Mi"
+    # The maximum resources the pod is allowed to consume.
+    limits:
+      cpu: "500m" # 500m" = 0.5 vCPU
+      memory: "512Mi"
+
+# --- Sidecar Configuration ---
+# A helper container that runs in the same pod as Loki.
+sidecar:
+  # Its main job is to watch for ConfigMaps (containing rule files) and load them into Loki.
+  image:
+    repository: kiwigrid/k8s-sidecar
+    tag: 1.30.0
+  # Resource allocation for the sidecar container, which is typically very lightweight.
+  resources:
+    requests:
+      cpu: 50m # 5% of a CPU core
+      memory: 50Mi # 50 Mebibytes of RAM
+    limits:
+      cpu: 100m # 10% of a CPU core
+      memory: 100Mi # 100 Mebibytes of RAM
+
+# --- Microservices Components ---
+# These components are part of the 'SimpleScalable' deployment mode.
+# They are disabled here by setting replicas to 0 because we are using 'SingleBinary' mode.
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+
+# --- Caching Configuration ---
+# Configures an in-memory cache for Loki.
+chunksCache:
+  # The amount of memory allocated for caching recently accessed log chunks.
+  # This helps speed up recent queries.
+  allocatedMemory: 500
