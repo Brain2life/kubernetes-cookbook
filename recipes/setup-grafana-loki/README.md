@@ -1,4 +1,4 @@
-# Install Grafana Loki on Kubernetes by using Helm
+# Install and Setup Grafana,  Loki and Alloy on AWS EKS
 
 [Grafana Loki](https://grafana.com/docs/loki/latest/) is an open-source, highly-scalable, multi-tenant log aggregation system. Inspired by Prometheus, it takes a unique and cost-effective approach to handling logs, particularly in cloud-native environments like Kubernetes. **Unlike traditional logging systems that index the full text of logs, Loki indexes only a small set of labels associated with each log stream, making it incredibly efficient in terms of storage and resource consumption**.
 
