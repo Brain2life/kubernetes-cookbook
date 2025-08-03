@@ -16,3 +16,4 @@ Kubernetes is one of the most widely deployed software systems in the world bein
 - [Scaling Kubernetes Workloads: How Metrics Server and HPA Work Together](./recipes/metrics-server/)
 - [Init Container Basics](./recipes/init-containers/basics/)
 - [Helm Charts Basics: Create Helm Chart for Nginx app](./recipes/helm-charts-basics/)
+- [Setup Grafana, Loki and Alloy on AWS EKS](./recipes/setup-grafana-loki/)
